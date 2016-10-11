@@ -76,4 +76,9 @@ interface IStatusBarService
     void remTile(in ComponentName tile);
     void clickTile(in ComponentName tile);
     void handleSystemKey(in int key);
+
+    /**
+     * Custom methods
+     */
+    void toggleNavigationBar(boolean enable);
 }
