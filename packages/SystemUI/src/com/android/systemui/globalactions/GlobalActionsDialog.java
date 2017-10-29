@@ -763,7 +763,7 @@ class GlobalActionsDialog implements DialogInterface.OnDismissListener, DialogIn
     public void onClick(DialogInterface dialog, int which) {
         Action item = mAdapter.getItem(which);
         if (!(item instanceof SilentModeTriStateAction) &&
-                !(item instanceof ToggleRestartAdvancedAction) {
+                !(item instanceof ToggleRestartAdvancedAction)) {
             dialog.dismiss();
         }
         item.onPress();
