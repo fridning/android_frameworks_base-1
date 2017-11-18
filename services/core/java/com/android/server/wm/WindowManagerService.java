@@ -7670,7 +7670,32 @@ public class WindowManagerService extends IWindowManager.Stub
     }
 
     boolean hasWideColorGamutSupport() {
-        return mHasWideColorGamutSupport;
+        return mHasWideColorGamutSupport &&
+                !SystemProperties.getBoolean("persist.sys.sf.native_mode", false);
+    }
+
+    void updateNonSystemOverlayWindowsVisibilityIfNeeded(WindowState win, boolean surfaceShown) {
+        if (!win.hideNonSystemOverlayWindowsWhenVisible()) {
+            return;
+        }
+        final boolean systemAlertWindowsHidden = !mHidingNonSystemOverlayWindows.isEmpty();
+        if (surfaceShown) {
+            if (!mHidingNonSystemOverlayWindows.contains(win)) {
+                mHidingNonSystemOverlayWindows.add(win);
+            }
+        } else {
+            mHidingNonSystemOverlayWindows.remove(win);
+        }
+
+        final boolean hideSystemAlertWindows = !mHidingNonSystemOverlayWindows.isEmpty();
+
+        if (systemAlertWindowsHidden == hideSystemAlertWindows) {
+            return;
+        }
+
+        mRoot.forAllWindows((w) -> {
+            w.setForceHideNonSystemOverlayWindowIfNeeded(hideSystemAlertWindows);
+        }, false /* traverseTopToBottom */);
     }
 
     void updateNonSystemOverlayWindowsVisibilityIfNeeded(WindowState win, boolean surfaceShown) {
